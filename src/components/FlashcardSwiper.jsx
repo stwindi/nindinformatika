@@ -1,207 +1,241 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, RotateCcw, Trophy } from 'lucide-react';
+import { RotateCcw, ThumbsUp, ThumbsDown, Trophy } from 'lucide-react';
 
 export default function FlashcardSwiper({ cards, onComplete }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [swipeDir, setSwipeDir] = useState(null); // 'right' | 'left'
+  const [index, setIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
   const [known, setKnown] = useState(0);
-  const [unknown, setUnknown] = useState(0);
   const [done, setDone] = useState(false);
   const [dragX, setDragX] = useState(0);
-  const startX = useRef(null);
+  const [exiting, setExiting] = useState(null); // 'left' | 'right'
+  const dragStartX = useRef(null);
 
-  const current = cards[currentIndex];
-
-  const handleFlip = () => setIsFlipped(f => !f);
-
-  const handleSwipe = (dir) => {
-    if (swipeDir) return;
-    setSwipeDir(dir);
-    if (dir === 'right') setKnown(k => k + 1);
-    else setUnknown(u => u + 1);
-
-    setTimeout(() => {
-      setSwipeDir(null);
-      setIsFlipped(false);
-      setDragX(0);
-      if (currentIndex + 1 >= cards.length) {
-        setDone(true);
-      } else {
-        setCurrentIndex(i => i + 1);
-      }
-    }, 400);
-  };
-
-  const handleDragStart = (e) => {
-    startX.current = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-  };
-
-  const handleDragMove = (e) => {
-    if (startX.current === null) return;
-    const x = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-    setDragX(x - startX.current);
-  };
-
-  const handleDragEnd = () => {
-    if (Math.abs(dragX) > 80) {
-      handleSwipe(dragX > 0 ? 'right' : 'left');
-    } else {
-      setDragX(0);
-    }
-    startX.current = null;
-  };
-
-  const handleReset = () => {
-    setCurrentIndex(0);
-    setIsFlipped(false);
-    setSwipeDir(null);
-    setDragX(0);
-    setKnown(0);
-    setUnknown(0);
-    setDone(false);
-  };
-
-  if (cards.length === 0) {
+  if (!cards || cards.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-80">
-        <div className="text-5xl mb-4">📭</div>
-        <p className="text-gray-500">Deck ini belum punya kartu.</p>
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="text-6xl mb-4">🃏</div>
+        <h3 className="text-lg font-bold text-gray-700 mb-2">Deck masih kosong</h3>
+        <p className="text-gray-500 text-sm">Tambah flashcard dulu untuk mulai review!</p>
       </div>
     );
   }
 
   if (done) {
-    const score = Math.round((known / cards.length) * 100);
+    const pct = Math.round((known / cards.length) * 100);
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center text-center py-12 px-6"
+        className="flex flex-col items-center justify-center py-12 text-center"
       >
-        <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-2xl font-extrabold text-gray-900 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>
-          Review Selesai!
-        </h2>
-        <div className="my-6 grid grid-cols-3 gap-4 w-full max-w-xs">
-          <div className="bg-gray-50 rounded-2xl p-4 text-center">
-            <p className="text-2xl font-bold text-gray-900">{cards.length}</p>
-            <p className="text-xs text-gray-500 mt-1">Total</p>
-          </div>
-          <div className="bg-emerald-50 rounded-2xl p-4 text-center">
-            <p className="text-2xl font-bold text-emerald-600">{known}</p>
-            <p className="text-xs text-emerald-600 mt-1">Paham ✓</p>
-          </div>
-          <div className="bg-red-50 rounded-2xl p-4 text-center">
-            <p className="text-2xl font-bold text-red-500">{unknown}</p>
-            <p className="text-xs text-red-500 mt-1">Perlu Ulang</p>
-          </div>
-        </div>
+        <Trophy size={64} className="text-amber-400 mb-4" />
+        <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Sesi Selesai! 🎉</h2>
+        <p className="text-gray-500 mb-6">Kamu hafal {known} dari {cards.length} kartu</p>
         <div className="w-full max-w-xs mb-6">
-          <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full transition-all"
-              style={{ width: `${score}%` }}
+          <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <span>Skor</span>
+            <span className="font-bold text-primary-600">{pct}%</span>
+          </div>
+          <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${pct}%` }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+              className={`h-full rounded-full ${pct >= 80 ? 'bg-emerald-500' : pct >= 50 ? 'bg-amber-400' : 'bg-primary-500'}`}
             />
           </div>
-          <p className="text-center text-sm font-semibold text-gray-600 mt-2">{score}% dipahami</p>
         </div>
         <div className="flex gap-3">
           <button
-            onClick={handleReset}
-            className="flex items-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-2xl text-sm hover:border-primary-300 hover:text-primary-700 transition-all"
+            onClick={() => { setIndex(0); setFlipped(false); setKnown(0); setDone(false); setDragX(0); setExiting(null); }}
+            className="flex items-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-2xl hover:bg-gray-50 transition-colors"
           >
             <RotateCcw size={16} /> Ulangi
           </button>
-          {onComplete && (
-            <button
-              onClick={onComplete}
-              className="flex items-center gap-2 px-6 py-3 gradient-primary text-white font-semibold rounded-2xl text-sm"
-            >
-              <Trophy size={16} /> Selesai
-            </button>
-          )}
+          <button
+            onClick={onComplete}
+            className="px-6 py-3 gradient-primary text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity"
+          >
+            Selesai ✓
+          </button>
         </div>
       </motion.div>
     );
   }
 
-  const swipeIndicatorOpacity = Math.min(Math.abs(dragX) / 100, 1);
-  const rotation = dragX * 0.05;
+  const card = cards[index];
+
+  const advance = (wasKnown) => {
+    setExiting(wasKnown ? 'right' : 'left');
+    if (wasKnown) setKnown(k => k + 1);
+    setTimeout(() => {
+      if (index + 1 >= cards.length) {
+        setDone(true);
+      } else {
+        setIndex(i => i + 1);
+        setFlipped(false);
+        setDragX(0);
+        setExiting(null);
+      }
+    }, 350);
+  };
+
+  // Drag handlers
+  const onDragStart = (e) => {
+    dragStartX.current = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+  };
+  const onDragMove = (e) => {
+    if (dragStartX.current === null) return;
+    const x = (e.type === 'touchmove' ? e.touches[0].clientX : e.clientX) - dragStartX.current;
+    setDragX(x);
+  };
+  const onDragEnd = () => {
+    if (Math.abs(dragX) > 80) {
+      advance(dragX > 0);
+    } else {
+      setDragX(0);
+    }
+    dragStartX.current = null;
+  };
+
+  // Render card face content (text + image/emoji support)
+  const renderCardContent = (text, imageData, emoji, gradient) => {
+    // AI visual card (emoji + gradient)
+    if (emoji && gradient) {
+      return (
+        <div
+          className="w-full h-full rounded-3xl flex flex-col items-center justify-center p-6 text-center"
+          style={{ background: gradient }}
+        >
+          <div className="text-7xl mb-4 drop-shadow-lg">{emoji}</div>
+          {text && <p className="text-white font-bold text-xl drop-shadow-md leading-snug">{text}</p>}
+        </div>
+      );
+    }
+    // Drawing/image card
+    if (imageData) {
+      return (
+        <div className="w-full h-full rounded-3xl overflow-hidden flex flex-col">
+          <img src={imageData} alt="card" className="w-full flex-1 object-contain bg-gray-50" />
+          {text && (
+            <div className="px-4 py-3 text-center">
+              <p className="text-gray-800 font-semibold text-sm">{text}</p>
+            </div>
+          )}
+        </div>
+      );
+    }
+    // Plain text card
+    return (
+      <div className="w-full h-full flex items-center justify-center p-8 text-center">
+        <p className="text-gray-800 font-semibold text-xl leading-snug">{text}</p>
+      </div>
+    );
+  };
+
+  const swipeOpacity = Math.min(Math.abs(dragX) / 80, 1);
+  const swipeDirection = dragX > 0 ? 'right' : dragX < 0 ? 'left' : null;
 
   return (
-    <div className="flex flex-col items-center select-none">
+    <div className="flex flex-col items-center gap-6">
       {/* Progress */}
-      <div className="w-full max-w-sm mb-6">
-        <div className="flex justify-between text-xs text-gray-500 mb-1">
-          <span>{currentIndex + 1} / {cards.length}</span>
-          <span className="text-emerald-500 font-medium">{known} paham</span>
-        </div>
-        <div className="h-2 bg-gray-100 rounded-full">
+      <div className="w-full flex items-center gap-3">
+        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="h-full gradient-emerald rounded-full transition-all duration-300"
-            style={{ width: `${((currentIndex) / cards.length) * 100}%` }}
+            className="h-full rounded-full bg-primary-500 transition-all duration-300"
+            style={{ width: `${((index) / cards.length) * 100}%` }}
           />
         </div>
+        <span className="text-sm text-gray-500 font-medium flex-shrink-0">{index + 1}/{cards.length}</span>
+      </div>
+
+      {/* Swipe hint */}
+      <div className="flex gap-6 text-xs text-gray-400">
+        <span>← Belum hafal</span>
+        <span>Tap balik kartu</span>
+        <span>Sudah hafal →</span>
       </div>
 
       {/* Card */}
-      <div className="relative w-full max-w-sm h-72">
-        {/* Next card peek */}
-        {currentIndex + 1 < cards.length && (
-          <div className="absolute inset-0 bg-white rounded-3xl shadow-card border border-gray-100 -translate-y-2 scale-95 z-0" />
-        )}
-
-        <AnimatePresence mode="wait">
+      <div
+        className="relative w-full max-w-sm select-none"
+        style={{ height: 320 }}
+        onMouseDown={onDragStart}
+        onMouseMove={onDragMove}
+        onMouseUp={onDragEnd}
+        onMouseLeave={onDragEnd}
+        onTouchStart={onDragStart}
+        onTouchMove={onDragMove}
+        onTouchEnd={onDragEnd}
+      >
+        <AnimatePresence>
           <motion.div
-            key={currentIndex}
-            className={`absolute inset-0 z-10 ${swipeDir === 'right' ? 'swipe-right' : swipeDir === 'left' ? 'swipe-left' : ''}`}
-            style={{
-              transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
-              transition: swipeDir ? undefined : dragX === 0 ? 'transform 0.3s ease' : undefined,
+            key={index}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{
+              scale: 1, opacity: 1,
+              x: exiting === 'right' ? 300 : exiting === 'left' ? -300 : dragX,
+              rotate: exiting ? (exiting === 'right' ? 15 : -15) : dragX / 20,
             }}
-            onMouseDown={handleDragStart}
-            onMouseMove={handleDragMove}
-            onMouseUp={handleDragEnd}
-            onMouseLeave={handleDragEnd}
-            onTouchStart={handleDragStart}
-            onTouchMove={handleDragMove}
-            onTouchEnd={handleDragEnd}
+            transition={exiting ? { duration: 0.35 } : { type: 'spring', stiffness: 300, damping: 30 }}
+            className="absolute inset-0 cursor-grab active:cursor-grabbing"
+            onClick={() => !dragX && setFlipped(f => !f)}
           >
-            {/* Swipe indicators */}
-            {dragX > 20 && (
-              <div className="absolute top-4 left-4 z-20 px-3 py-1.5 bg-emerald-500 text-white rounded-xl text-sm font-bold"
-                style={{ opacity: swipeIndicatorOpacity }}>
-                Paham ✓
+            {/* Swipe indicator overlays */}
+            {swipeDirection === 'right' && (
+              <div className="absolute inset-0 rounded-3xl bg-emerald-400/20 border-4 border-emerald-400 z-10 flex items-center justify-start pl-6 pointer-events-none"
+                style={{ opacity: swipeOpacity }}>
+                <div className="bg-emerald-500 text-white px-3 py-1 rounded-full font-bold text-sm rotate-[-15deg]">HAFAL ✓</div>
               </div>
             )}
-            {dragX < -20 && (
-              <div className="absolute top-4 right-4 z-20 px-3 py-1.5 bg-red-500 text-white rounded-xl text-sm font-bold"
-                style={{ opacity: swipeIndicatorOpacity }}>
-                Ulang ✗
+            {swipeDirection === 'left' && (
+              <div className="absolute inset-0 rounded-3xl bg-red-400/20 border-4 border-red-400 z-10 flex items-center justify-end pr-6 pointer-events-none"
+                style={{ opacity: swipeOpacity }}>
+                <div className="bg-red-500 text-white px-3 py-1 rounded-full font-bold text-sm rotate-[15deg]">ULANG ✕</div>
               </div>
             )}
 
-            {/* The card itself */}
-            <div className="flashcard-scene w-full h-full">
+            {/* Flip card container */}
+            <div
+              className="w-full h-full"
+              style={{
+                perspective: 1200,
+                transformStyle: 'preserve-3d',
+              }}
+            >
               <div
-                className={`flashcard-card w-full h-full ${isFlipped ? 'flipped' : ''}`}
-                onClick={handleFlip}
+                style={{
+                  width: '100%', height: '100%',
+                  position: 'relative',
+                  transformStyle: 'preserve-3d',
+                  transition: 'transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1)',
+                  transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                }}
               >
                 {/* Front */}
-                <div className="flashcard-face bg-white border-2 border-primary-100 shadow-card">
-                  <div className="text-xs font-semibold text-primary-400 uppercase tracking-wide mb-4">Pertanyaan</div>
-                  <p className="text-center text-gray-900 font-semibold text-lg leading-snug">{current?.front}</p>
-                  <div className="mt-6 flex items-center gap-1 text-xs text-gray-400">
-                    <span>Tap untuk lihat jawaban</span>
-                  </div>
+                <div
+                  className="absolute inset-0 bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
+                  style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
+                >
+                  <div className="absolute top-3 left-4 text-xs font-semibold text-gray-300 uppercase tracking-wide">Depan</div>
+                  {renderCardContent(card.front, card.frontImage, card.frontEmoji, card.frontGradient)}
+                  <div className="absolute bottom-3 right-4 text-xs text-gray-300">Tap untuk balik</div>
                 </div>
 
                 {/* Back */}
-                <div className="flashcard-back flashcard-face bg-gradient-to-br from-primary-600 to-cyan-500">
-                  <div className="text-xs font-semibold text-white/60 uppercase tracking-wide mb-4">Jawaban</div>
-                  <p className="text-center text-white font-semibold text-lg leading-snug">{current?.back}</p>
+                <div
+                  className="absolute inset-0 rounded-3xl shadow-xl overflow-hidden"
+                  style={{
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transform: 'rotateY(180deg)',
+                    background: card.frontGradient ? 'linear-gradient(135deg, #f8f4ff, #f0f9ff)' : '#fafafa',
+                    border: '1px solid #e5e7eb',
+                  }}
+                >
+                  <div className="absolute top-3 left-4 text-xs font-semibold text-primary-400 uppercase tracking-wide">Jawaban</div>
+                  {renderCardContent(card.back, card.backImage, null, null)}
                 </div>
               </div>
             </div>
@@ -209,28 +243,27 @@ export default function FlashcardSwiper({ cards, onComplete }) {
         </AnimatePresence>
       </div>
 
-      {/* Hint */}
-      <p className="text-xs text-gray-400 mt-4 mb-6">Tap untuk flip · Swipe kanan = paham · Swipe kiri = perlu ulang</p>
-
-      {/* Action buttons */}
-      <div className="flex gap-6">
+      {/* Buttons */}
+      <div className="flex gap-4 w-full max-w-sm">
         <button
-          onClick={() => handleSwipe('left')}
-          className="w-14 h-14 rounded-full bg-red-50 border-2 border-red-200 text-red-500 flex items-center justify-center hover:bg-red-100 hover:scale-110 transition-all"
+          onClick={() => advance(false)}
+          className="flex-1 flex flex-col items-center gap-1 py-4 bg-white border-2 border-red-100 text-red-500 font-semibold rounded-2xl hover:bg-red-50 hover:border-red-300 transition-all active:scale-95"
         >
-          <X size={24} />
+          <ThumbsDown size={22} />
+          <span className="text-xs">Belum hafal</span>
         </button>
         <button
-          onClick={handleFlip}
-          className="w-14 h-14 rounded-full bg-gray-100 border-2 border-gray-200 text-gray-600 flex items-center justify-center hover:bg-gray-200 hover:scale-110 transition-all"
+          onClick={() => setFlipped(f => !f)}
+          className="px-6 py-4 bg-white border-2 border-gray-100 text-gray-500 font-semibold rounded-2xl hover:bg-gray-50 transition-all text-sm active:scale-95"
         >
-          <RotateCcw size={20} />
+          Balik
         </button>
         <button
-          onClick={() => handleSwipe('right')}
-          className="w-14 h-14 rounded-full bg-emerald-50 border-2 border-emerald-200 text-emerald-500 flex items-center justify-center hover:bg-emerald-100 hover:scale-110 transition-all"
+          onClick={() => advance(true)}
+          className="flex-1 flex flex-col items-center gap-1 py-4 bg-white border-2 border-emerald-100 text-emerald-500 font-semibold rounded-2xl hover:bg-emerald-50 hover:border-emerald-300 transition-all active:scale-95"
         >
-          <Check size={24} />
+          <ThumbsUp size={22} />
+          <span className="text-xs">Hafal!</span>
         </button>
       </div>
     </div>

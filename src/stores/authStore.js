@@ -14,25 +14,33 @@ const useAuthStore = create((set, get) => ({
 
   initAuth: () => {
     return onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const profileRef = doc(db, 'users', firebaseUser.uid);
-        const profileSnap = await getDoc(profileRef);
-        let profile;
-        if (profileSnap.exists()) {
-          profile = profileSnap.data();
-        } else {
-          profile = {
+      try {
+        if (firebaseUser) {
+          // Try to load Firestore profile, but don't crash if it fails
+          let profile = {
             name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'StudyBuddy',
             email: firebaseUser.email,
             photoURL: firebaseUser.photoURL || null,
             streak: 0,
             lastStudyDate: null,
-            createdAt: serverTimestamp(),
           };
-          await setDoc(profileRef, profile);
+          try {
+            const profileRef = doc(db, 'users', firebaseUser.uid);
+            const profileSnap = await getDoc(profileRef);
+            if (profileSnap.exists()) {
+              profile = profileSnap.data();
+            } else {
+              await setDoc(profileRef, { ...profile, createdAt: serverTimestamp() });
+            }
+          } catch (firestoreErr) {
+            console.warn('Firestore profile load failed, using defaults:', firestoreErr.message);
+          }
+          set({ user: firebaseUser, profile, loading: false, error: null });
+        } else {
+          set({ user: null, profile: null, loading: false });
         }
-        set({ user: firebaseUser, profile, loading: false, error: null });
-      } else {
+      } catch (err) {
+        console.error('Auth init error:', err);
         set({ user: null, profile: null, loading: false });
       }
     });

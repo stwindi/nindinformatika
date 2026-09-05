@@ -1,7 +1,15 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+// Log key prefix for debug (safe - only shows first 10 chars)
+console.log('[Gemini] API key prefix:', API_KEY?.slice(0, 10));
+
+const genAI = new GoogleGenerativeAI(API_KEY);
+
+function getModel() {
+  return genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
+}
 
 // ---- TASK BREAKDOWN ----
 export async function breakdownTask(naturalLanguageInput) {
@@ -24,10 +32,16 @@ Balas HANYA dengan JSON valid seperti ini (tanpa markdown, tanpa teks lain):
 }
 `.trim();
 
-  const result = await model.generateContent(prompt);
-  const text = result.response.text().trim();
-  const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-  return JSON.parse(jsonStr);
+  try {
+    const m = getModel();
+    const result = await m.generateContent(prompt);
+    const text = result.response.text().trim();
+    const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    console.error('[Gemini] breakdownTask error:', err);
+    throw err;
+  }
 }
 
 // ---- FLASHCARD GENERATOR ----
@@ -42,21 +56,55 @@ Materi:
 
 Balas HANYA dengan JSON array valid (tanpa markdown, tanpa teks lain):
 [
-  { "front": "pertanyaan atau konsep", "back": "jawaban singkat" },
-  ...
+  { "front": "pertanyaan atau konsep", "back": "jawaban singkat" }
 ]
 `.trim();
 
-  const result = await model.generateContent(prompt);
-  const text = result.response.text().trim();
-  const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-  return JSON.parse(jsonStr);
+  try {
+    const m = getModel();
+    const result = await m.generateContent(prompt);
+    const text = result.response.text().trim();
+    const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    console.error('[Gemini] generateFlashcards error:', err);
+    throw err;
+  }
 }
 
+// ---- AI VISUAL FLASHCARD ----
+export async function generateVisualFlashcard(topic) {
+  const prompt = `
+Kamu adalah asisten AI untuk aplikasi belajar remaja Indonesia.
+Buat satu visual flashcard menarik untuk topik: "${topic}"
+
+Balas HANYA dengan JSON valid (tanpa markdown):
+{
+  "front": "konsep/pertanyaan singkat (maks 8 kata)",
+  "back": "penjelasan singkat dan mudah dipahami (maks 30 kata)",
+  "emoji": "satu emoji yang paling relevan dengan topik",
+  "gradient": "CSS linear-gradient string yang menarik, contoh: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+}
+
+Pilih warna gradient yang cerah, menarik, dan sesuai tema topiknya.
+`.trim();
+
+  try {
+    const m = getModel();
+    const result = await m.generateContent(prompt);
+    const text = result.response.text().trim();
+    const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    console.error('[Gemini] generateVisualFlashcard error:', err);
+    throw err;
+  }
+}
+
+
 // ---- CHAT COMPANION ----
-export function createChatSession() {
-  const systemInstruction = `
-Kamu adalah StudyBuddy, teman belajar AI yang ramah dan suportif untuk remaja SMP/SMA Indonesia.
+// systemInstruction disertakan sebagai pesan pertama supaya kompatibel dengan semua versi API
+const SYSTEM_PROMPT = `Kamu adalah StudyBuddy, teman belajar AI yang ramah dan suportif untuk remaja SMP/SMA Indonesia.
 Karakter kamu:
 - Bahasa santai, friendly, cocok untuk remaja. Gunakan bahasa Indonesia yang kasual tapi sopan.
 - Suportif, memotivasi, tidak menggurui, tidak menghakimi.
@@ -64,17 +112,33 @@ Karakter kamu:
 - Kalau user minta breakdown tugas, jawab dulu lalu tambahkan [ACTION:BREAKDOWN_TASK] di akhir response.
 - Kalau user minta generate flashcard dari materi, jawab dulu lalu tambahkan [ACTION:GENERATE_FLASHCARD] di akhir response.
 - Jaga respons tetap ringkas, maksimal 3-4 paragraf kecuali diminta detail.
-- Sesekali pakai emoji yang relevan supaya lebih hidup 😊📚✨
-`.trim();
+- Sesekali pakai emoji yang relevan supaya lebih hidup 😊📚✨`;
 
-  const chat = model.startChat({
-    history: [],
-    systemInstruction,
+export function createChatSession() {
+  const m = getModel();
+  // Gunakan history dengan system prompt sebagai model message pertama
+  // supaya kompatibel dengan semua tipe API key
+  const chat = m.startChat({
+    history: [
+      {
+        role: 'user',
+        parts: [{ text: 'Halo, siapa kamu dan apa yang bisa kamu bantu?' }],
+      },
+      {
+        role: 'model',
+        parts: [{ text: `${SYSTEM_PROMPT}\n\nHey! Aku StudyBuddy 👋 Teman belajar AI-mu! Aku bisa bantu breakdown tugas, bikin flashcard, jawab soal pelajaran, atau sekedar kasih semangat. Mau mulai dari mana? 😊` }],
+      },
+    ],
   });
   return chat;
 }
 
 export async function sendChatMessage(chat, message) {
-  const result = await chat.sendMessage(message);
-  return result.response.text();
+  try {
+    const result = await chat.sendMessage(message);
+    return result.response.text();
+  } catch (err) {
+    console.error('[Gemini] sendChatMessage error:', err.message, err);
+    throw err;
+  }
 }

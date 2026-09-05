@@ -3,7 +3,36 @@
 /* ===== GLOBAL STYLES ===== */
 * {
   box-sizing: border-box;
+  /* Prevent blue tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* ===== BUTTON RESET — prevent white flash on active ===== */
+button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Buttons with gradient background should not turn white when clicked */
+button.gradient-primary,
+[class*="gradient-primary"] {
+  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%) !important;
+  color: white !important;
+}
+button.gradient-primary:active,
+[class*="gradient-primary"]:active {
+  opacity: 0.88;
+}
+
+/* Prevent focus outline flash turning elements white */
+button:focus {
+  outline: none;
+}
+button:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
 
 html {
   scroll-behavior: smooth;

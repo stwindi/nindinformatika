@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 import useAuthStore from '../stores/authStore';
 import toast from 'react-hot-toast';
 
 export default function AuthPage() {
-  const navigate = useNavigate();
-  const { loginEmail, registerEmail, loginGoogle, loading } = useAuthStore();
+  const { loginEmail, registerEmail, loginGoogle } = useAuthStore();
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [showPass, setShowPass] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -27,7 +26,8 @@ export default function AuthPage() {
         await registerEmail(form.email, form.password, form.name);
         toast.success('Akun berhasil dibuat! Selamat belajar 🎉');
       }
-      navigate('/dashboard');
+      // Redirect handled automatically by App.jsx reactive routing
+      // when onAuthStateChanged fires and updates user state
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -40,7 +40,7 @@ export default function AuthPage() {
     try {
       await loginGoogle();
       toast.success('Login berhasil! 🎉');
-      navigate('/dashboard');
+      // Redirect handled automatically by App.jsx reactive routing
     } catch (err) {
       toast.error('Login Google gagal');
     } finally {
