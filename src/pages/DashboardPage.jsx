@@ -108,7 +108,10 @@ export default function DashboardPage() {
                           <p className="text-sm font-semibold text-gray-800 truncate">{task.title}</p>
                           <SubjectBadge subject={task.subject} size="xs" />
                         </div>
-                        <ProgressBar value={task.progress || 0} size="sm" />
+                        <div className="w-24 flex-shrink-0">
+                          <ProgressBar value={task.progress || 0} size="sm" />
+                          <p className="text-[10px] text-gray-400 text-right mt-0.5">{task.progress || 0}%</p>
+                        </div>
                       </div>
                     </Link>
                   );

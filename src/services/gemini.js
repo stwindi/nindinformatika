@@ -11,6 +11,63 @@ function getModel() {
   return genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
 }
 
+// ---- TASK BREAKDOWN WITH DOCUMENT ----
+// docData: { type: 'pdf'|'image'|'text', base64?: string, mimeType?: string, text?: string }
+export async function breakdownTaskWithDocument(userDescription, docData) {
+  const promptText = `
+Kamu adalah asisten AI untuk aplikasi belajar remaja Indonesia.
+Analisis dokumen/materi yang diberikan user, lalu buat breakdown tugas yang sangat detail dan spesifik berdasarkan ISI DOKUMEN tersebut.
+
+Deskripsi tugas dari user: "${userDescription || 'Tidak ada deskripsi tambahan'}"
+
+Instruksi:
+- Baca seluruh isi dokumen dengan teliti
+- Buat subtask yang spesifik berdasarkan konten dokumen (bukan generik)
+- Estimasi waktu yang realistis untuk remaja SMA
+- Identifikasi mata pelajaran dari isi dokumen
+
+Balas HANYA dengan JSON valid (tanpa markdown, tanpa teks lain):
+{
+  "title": "judul singkat tugas berdasarkan dokumen",
+  "subject": "Mata Pelajaran yang teridentifikasi",
+  "estimatedDeadlineDays": 7,
+  "priority": "high|medium|low",
+  "summary": "ringkasan singkat isi dokumen dalam 1-2 kalimat",
+  "subtasks": [
+    { "title": "langkah spesifik berdasarkan isi dokumen", "estimatedMinutes": 30 },
+    { "title": "langkah 2", "estimatedMinutes": 45 }
+  ]
+}
+`.trim();
+
+  try {
+    const m = getModel();
+    let result;
+
+    if (docData.type === 'pdf' || docData.type === 'image') {
+      // Send PDF/image directly to Gemini (native multimodal)
+      result = await m.generateContent([
+        { inlineData: { data: docData.base64, mimeType: docData.mimeType } },
+        promptText,
+      ]);
+    } else {
+      // Text-based (DOCX extracted text, TXT)
+      result = await m.generateContent(
+        `${promptText}\n\nISI DOKUMEN:\n${docData.text}`
+      );
+    }
+
+    const text = result.response.text().trim();
+    const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    console.error('[Gemini] breakdownTaskWithDocument error:', err);
+    throw err;
+  }
+}
+
+
+
 // ---- TASK BREAKDOWN ----
 export async function breakdownTask(naturalLanguageInput) {
   const prompt = `
