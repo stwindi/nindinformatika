@@ -11,8 +11,10 @@ import TasksPage      from './pages/TasksPage';
 import TaskDetailPage from './pages/TaskDetailPage';
 import FlashcardsPage from './pages/FlashcardsPage';
 import DeckReviewPage from './pages/DeckReviewPage';
-import ChatPage       from './pages/ChatPage';
-import ProfilePage    from './pages/ProfilePage';
+import ChatPage          from './pages/ChatPage';
+import ProfilePage       from './pages/ProfilePage';
+import SummaryPage       from './pages/SummaryPage';
+import SummaryDetailPage from './pages/SummaryDetailPage';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -117,6 +119,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Layout><ProfilePage /></Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/summary"
+          element={
+            <ProtectedRoute>
+              <Layout><SummaryPage /></Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/summary/:id"
+          element={
+            <ProtectedRoute>
+              <Layout><SummaryDetailPage /></Layout>
             </ProtectedRoute>
           }
         />

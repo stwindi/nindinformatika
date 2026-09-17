@@ -53,15 +53,23 @@ export default function AuthPage() {
       {/* Left decoration — hidden on mobile */}
       <div className="hidden lg:flex flex-1 gradient-primary items-center justify-center p-16">
         <div className="text-white max-w-md">
-          <div className="text-6xl mb-6 animate-float">📚</div>
+          <div className="w-20 h-20 mb-6 drop-shadow-lg">
+            <img src="/logo.png" alt="Clova Logo" className="w-full h-full object-contain" />
+          </div>
           <h2 className="text-4xl font-extrabold mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>
             Belajar lebih smart,<br />bukan lebih keras 💡
           </h2>
           <p className="text-white/80 text-lg leading-relaxed">
-            AI bantu kamu pecah tugas besar, bikin flashcard instan, dan jaga streak belajar harianmu.
+            AI bantu kamu pecah tugas besar, rangkum materi sekolah, bikin flashcard instan, dan jaga streak belajarmu.
           </p>
           <div className="mt-10 space-y-3">
-            {['✅ Task Manager dengan AI Breakdown','🃏 Flashcard Generator Otomatis','🤖 Chatbot Pendamping Belajar','🔥 Streak & Progress Tracker'].map((item, i) => (
+            {[
+              '✅ Task Manager dengan AI Breakdown',
+              '✨ Smart Summary Rangkuman Otomatis',
+              '🃏 Flashcard Generator Interaktif',
+              '🍀 Chatbot Pendamping Belajar Clova',
+              '🔥 Streak & Progress Tracker'
+            ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 text-white/90">
                 <div className="w-2 h-2 rounded-full bg-white/60" />
                 <span>{item}</span>
@@ -81,9 +89,11 @@ export default function AuthPage() {
           <div className="bg-white rounded-3xl shadow-card border border-gray-100 p-8">
             {/* Logo */}
             <div className="text-center mb-6">
-              <div className="text-4xl mb-2">📚</div>
-              <h1 className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Plus Jakarta Sans' }}>StudyBuddy AI</h1>
-              <p className="text-gray-500 text-sm mt-1">Teman belajar AI-mu</p>
+              <div className="w-14 h-14 mx-auto mb-2">
+                <img src="/logo.png" alt="Clova Logo" className="w-full h-full object-contain drop-shadow" />
+              </div>
+              <h1 className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Plus Jakarta Sans' }}>Clova</h1>
+              <p className="text-gray-500 text-sm mt-1">Petualangan belajarmu dimulai di sini</p>
             </div>
 
             {/* Tab */}
@@ -185,7 +195,7 @@ export default function AuthPage() {
           </div>
 
           <p className="text-center text-xs text-gray-400 mt-6">
-            Dengan mendaftar, kamu menyetujui syarat & ketentuan StudyBuddy AI.
+            Dengan mendaftar, kamu menyetujui syarat & ketentuan Clova.
           </p>
         </div>
       </div>

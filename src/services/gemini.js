@@ -161,11 +161,11 @@ Pilih warna gradient yang cerah, menarik, dan sesuai tema topiknya.
 
 // ---- CHAT COMPANION ----
 // systemInstruction disertakan sebagai pesan pertama supaya kompatibel dengan semua versi API
-const SYSTEM_PROMPT = `Kamu adalah StudyBuddy, teman belajar AI yang ramah dan suportif untuk remaja SMP/SMA Indonesia.
+const SYSTEM_PROMPT = `Kamu adalah Clova, teman belajar AI yang ramah dan suportif untuk remaja dan pelajar Indonesia.
 Karakter kamu:
 - Bahasa santai, friendly, cocok untuk remaja. Gunakan bahasa Indonesia yang kasual tapi sopan.
 - Suportif, memotivasi, tidak menggurui, tidak menghakimi.
-- Bisa bantu: jawab pertanyaan materi pelajaran, breakdown tugas, generate flashcard, kasih motivasi.
+- Bisa bantu: jawab pertanyaan materi pelajaran, breakdown tugas, rangkum materi, generate flashcard, kasih motivasi.
 - Kalau user minta breakdown tugas, jawab dulu lalu tambahkan [ACTION:BREAKDOWN_TASK] di akhir response.
 - Kalau user minta generate flashcard dari materi, jawab dulu lalu tambahkan [ACTION:GENERATE_FLASHCARD] di akhir response.
 - Jaga respons tetap ringkas, maksimal 3-4 paragraf kecuali diminta detail.
@@ -183,7 +183,7 @@ export function createChatSession() {
       },
       {
         role: 'model',
-        parts: [{ text: `${SYSTEM_PROMPT}\n\nHey! Aku StudyBuddy 👋 Teman belajar AI-mu! Aku bisa bantu breakdown tugas, bikin flashcard, jawab soal pelajaran, atau sekedar kasih semangat. Mau mulai dari mana? 😊` }],
+        parts: [{ text: `${SYSTEM_PROMPT}\n\nHey! Aku Clova 👋 Teman belajar AI-mu! Aku bisa bantu breakdown tugas, bikin flashcard, jawab soal pelajaran, atau sekedar kasih semangat. Mau mulai dari mana? 😊` }],
       },
     ],
   });
@@ -196,6 +196,96 @@ export async function sendChatMessage(chat, message) {
     return result.response.text();
   } catch (err) {
     console.error('[Gemini] sendChatMessage error:', err.message, err);
+    throw err;
+  }
+}
+
+// ---- SUBJECT DETECTION ----
+const VALID_SUBJECTS = [
+  'Matematika','Fisika','Kimia','Biologi','Bahasa Indonesia','Bahasa Inggris',
+  'Sejarah','Geografi','Ekonomi','Sosiologi','PKN','TIK','Seni','Olahraga','Umum',
+];
+
+export async function detectSubject(text) {
+  const prompt = `
+Kamu adalah sistem klasifikasi mata pelajaran sekolah Indonesia (SMP/SMA).
+Analisis teks berikut dan tentukan mata pelajaran yang paling sesuai.
+
+Daftar mata pelajaran yang valid: ${VALID_SUBJECTS.join(', ')}
+
+Teks:
+"""
+${text.slice(0, 2000)}
+"""
+
+Balas HANYA dengan JSON valid (tanpa markdown):
+{
+  "subject": "nama mata pelajaran dari daftar di atas",
+  "confidence": 0.95,
+  "candidates": ["alternatif 1", "alternatif 2"]
+}
+`.trim();
+
+  try {
+    const m = getModel();
+    const result = await m.generateContent(prompt);
+    const raw = result.response.text().trim();
+    const jsonStr = raw.replace(/\`\`\`json\n?/g, '').replace(/\`\`\`\n?/g, '').trim();
+    const parsed = JSON.parse(jsonStr);
+    if (!VALID_SUBJECTS.includes(parsed.subject)) parsed.subject = 'Umum';
+    return parsed;
+  } catch (err) {
+    console.error('[Gemini] detectSubject error:', err);
+    return { subject: 'Umum', confidence: 0, candidates: [] };
+  }
+}
+
+// ---- SMART SUMMARY GENERATOR ----
+export async function generateSmartSummary(text, subject) {
+  const isScience = ['Matematika','Fisika','Kimia','Biologi'].includes(subject);
+  const isMath    = subject === 'Matematika';
+
+  const prompt = `
+Kamu adalah asisten belajar AI untuk siswa SMP/SMA Indonesia.
+Buat rangkuman terstruktur dari materi berikut.
+
+Mata Pelajaran: ${subject}
+
+MATERI:
+"""
+${text.slice(0, 6000)}
+"""
+
+INSTRUKSI:
+1. Buat judul ringkas (maks 8 kata).
+2. Pecah materi menjadi 3–6 bagian utama. Tiap bagian punya heading dan 2–5 bullet point padat.
+3. Tiap bullet harus informatif dan bukan salinan mentah teks.
+${isScience ? '4. Ekstrak semua rumus penting ke array "formulas" (format teks: "F = m × a").' : '4. "formulas" biarkan kosong [].'}
+${isMath ? '5. Isi "youtubeQuery" dengan query pencarian YouTube bahasa Indonesia yang tepat.' : '5. "youtubeQuery" isi null.'}
+6. Berikan 1–3 referensi nyata dan kredibel. Sumber WAJIB dari: Khan Academy, Wikipedia, Kemdikbud.go.id, ruangguru.com, zenius.net, britannica.com, wolframalpha.com, atau sumber akademik sejenis. DILARANG blog pribadi atau forum.
+
+Balas HANYA dengan JSON valid (tanpa markdown):
+{
+  "title": "judul singkat",
+  "points": [
+    { "id": "pt_1", "heading": "Judul Bagian", "bullets": ["poin 1", "poin 2"] }
+  ],
+  "formulas": [],
+  "references": [
+    { "title": "Judul Halaman", "url": "https://...", "source": "Nama Situs" }
+  ],
+  "youtubeQuery": null
+}
+`.trim();
+
+  try {
+    const m = getModel();
+    const result = await m.generateContent(prompt);
+    const raw = result.response.text().trim();
+    const jsonStr = raw.replace(/\`\`\`json\n?/g, '').replace(/\`\`\`\n?/g, '').trim();
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    console.error('[Gemini] generateSmartSummary error:', err);
     throw err;
   }
 }

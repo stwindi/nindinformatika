@@ -1,11 +1,12 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, CheckSquare, BookOpen, MessageCircle, User, LogOut } from 'lucide-react';
+import { LayoutDashboard, CheckSquare, BookOpen, MessageCircle, User, LogOut, Sparkles } from 'lucide-react';
 import useAuthStore from '../stores/authStore';
 import toast from 'react-hot-toast';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Beranda' },
   { to: '/tasks',     icon: CheckSquare,    label: 'Tugas' },
+  { to: '/summary',   icon: Sparkles,       label: 'Summary' },
   { to: '/flashcards',icon: BookOpen,       label: 'Flashcard' },
   { to: '/chat',      icon: MessageCircle,  label: 'Chat AI' },
   { to: '/profile',   icon: User,           label: 'Profil' },
@@ -28,22 +29,21 @@ export default function Layout({ children }) {
         {/* Logo */}
         <div className="px-6 py-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center text-white text-lg font-bold shadow-glow">
-              📚
-            </div>
-            <div>
-              <h1 className="text-base font-bold text-gray-900" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-                StudyBuddy
-              </h1>
-              <p className="text-xs text-primary-600 font-medium">AI</p>
-            </div>
+            <img
+              src="/logo.png"
+              alt="Clova Logo"
+              className="w-9 h-9 object-contain drop-shadow"
+            />
+            <h1 className="text-base font-bold text-gray-900" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+              Clova
+            </h1>
           </div>
         </div>
 
         {/* User mini profile */}
         {profile && (
           <div className="px-4 py-3 mx-4 mt-4 bg-primary-50 rounded-2xl">
-            <p className="text-sm font-semibold text-gray-800 truncate">{profile.name || 'StudyBuddy User'}</p>
+            <p className="text-sm font-semibold text-gray-800 truncate">{profile.name || 'Clova User'}</p>
             <div className="flex items-center gap-1 mt-1">
               <span className="text-orange-400 text-sm">🔥</span>
               <span className="text-xs text-gray-600">{profile.streak || 0} hari streak</span>

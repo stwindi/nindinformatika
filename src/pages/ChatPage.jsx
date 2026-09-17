@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Sparkles, BookOpen, CheckSquare, Smile } from 'lucide-react';
 import { createChatSession, sendChatMessage } from '../services/gemini';
@@ -26,6 +27,7 @@ export default function ChatPage() {
   const [chatSession, setChatSession] = useState(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+  const [searchParams] = useSearchParams();
 
   // Init chat session
   useEffect(() => {
@@ -35,11 +37,18 @@ export default function ChatPage() {
     if (user?.uid) fetchDecks(user.uid);
 
     // Welcome message
-    setMessages([{
+    const welcomeMsg = {
       role: 'assistant',
-      content: `Heyy ${profile?.name?.split(' ')[0] || 'kamu'}! 👋 Aku StudyBuddy, teman belajar AI-mu.\n\nAku bisa bantu kamu:\n• 📋 Breakdown tugas jadi langkah kecil\n• 🃏 Generate flashcard dari materi\n• 💡 Jawab pertanyaan seputar pelajaran\n• 💪 Kasih semangat saat kamu capek\n\nMau mulai dari mana? 😊`,
+      content: `Heyy ${profile?.name?.split(' ')[0] || 'kamu'}! 👋 Aku Clova, teman belajar AI-mu.\n\nAku bisa bantu kamu:\n• 📋 Breakdown tugas jadi langkah kecil\n• 🃏 Generate flashcard dari materi\n• 💡 Jawab pertanyaan seputar pelajaran\n• 💪 Kasih semangat saat kamu capek\n\nMau mulai dari mana? 😊`,
       id: 'welcome',
-    }]);
+    };
+    setMessages([welcomeMsg]);
+
+    // Auto-fill from ?q= param (from "Ask AI" button on summary)
+    const qParam = new URLSearchParams(window.location.search).get('q');
+    if (qParam) {
+      setInput(decodeURIComponent(qParam));
+    }
   }, []);
 
   useEffect(() => {
@@ -108,7 +117,7 @@ export default function ChatPage() {
                 name: 'Dari Chat AI',
                 subject: 'Umum',
                 color: '#7c3aed',
-                icon: '🤖',
+                icon: '🍀',
               });
             }
             await addCards(user.uid, deckId, cards);
@@ -159,11 +168,11 @@ export default function ChatPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-6 py-4 flex-shrink-0">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl gradient-primary flex items-center justify-center text-xl shadow-glow">
-            🤖
+          <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-glow border border-emerald-200 bg-emerald-50 flex items-center justify-center flex-shrink-0">
+            <img src="/bot-avatar.png" alt="Clova Avatar" className="w-full h-full object-cover" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-gray-900" style={{ fontFamily: 'Plus Jakarta Sans' }}>StudyBuddy AI</h1>
+            <h1 className="text-base font-bold text-gray-900" style={{ fontFamily: 'Plus Jakarta Sans' }}>Clova</h1>
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <p className="text-xs text-gray-500">Online · Siap membantu belajar</p>
@@ -187,8 +196,8 @@ export default function ChatPage() {
                 }`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center text-sm flex-shrink-0 mb-1">
-                    🤖
+                  <div className="w-8 h-8 rounded-xl overflow-hidden shadow-sm flex-shrink-0 mb-1 border border-emerald-200 bg-white">
+                    <img src="/bot-avatar.png" alt="Clova" className="w-full h-full object-cover" />
                   </div>
                 )}
                 <div
@@ -208,7 +217,9 @@ export default function ChatPage() {
 
           {sending && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-2">
-              <div className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center text-sm">🤖</div>
+              <div className="w-8 h-8 rounded-xl overflow-hidden shadow-sm flex-shrink-0 mb-1 border border-emerald-200 bg-white">
+                <img src="/bot-avatar.png" alt="Clova" className="w-full h-full object-cover" />
+              </div>
               <div className="chat-bubble-ai px-4 py-3">
                 <div className="flex gap-1.5">
                   {[0, 1, 2].map(i => (
@@ -263,7 +274,7 @@ export default function ChatPage() {
           </button>
         </div>
         <p className="max-w-2xl mx-auto text-xs text-gray-400 mt-2 text-center">
-          StudyBuddy AI bisa salah. Selalu verifikasi informasi penting ya! 🙏
+          Clova bisa salah. Selalu verifikasi informasi penting ya! 🙏
         </p>
       </div>
     </div>

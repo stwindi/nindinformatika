@@ -17,7 +17,7 @@ const useAuthStore = create((set, get) => ({
       try {
         if (firebaseUser) {
           let profile = {
-            name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'StudyBuddy',
+            name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Clova',
             email: firebaseUser.email,
             photoURL: firebaseUser.photoURL || null,
             streak: 0,

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, Zap, BookOpen, MessageCircle, ArrowRight, Star } from 'lucide-react';
+import { CheckCircle, Zap, BookOpen, MessageCircle, ArrowRight, Star, Sparkles } from 'lucide-react';
+import MagicalHeroBackground from '../components/MagicalHeroBackground';
 
 const features = [
   {
@@ -9,6 +10,15 @@ const features = [
     desc: 'Ketik tugasmu dalam bahasa natural, AI langsung pecah jadi langkah-langkah kecil. Deadline nggak terasa menakutkan lagi!',
     color: 'from-purple-500 to-indigo-500',
     bg: 'bg-purple-50',
+    border: 'border-purple-100',
+  },
+  {
+    icon: '✨',
+    title: 'Smart Summary AI',
+    desc: 'Rangkum materi sekolah dan diperkaya materi pendukung dari sumber tepercaya otomatis ke folder mata pelajaran!',
+    color: 'from-indigo-500 to-violet-600',
+    bg: 'bg-indigo-50',
+    border: 'border-indigo-100',
   },
   {
     icon: '🃏',
@@ -16,27 +26,22 @@ const features = [
     desc: 'Paste materi pelajaranmu, AI langsung bikin flashcard swipeable. Belajar kayak main game, bukan scrolling TikTok!',
     color: 'from-cyan-500 to-blue-500',
     bg: 'bg-cyan-50',
+    border: 'border-cyan-100',
   },
   {
-    icon: '🤖',
-    title: 'AI Study Companion',
+    icon: '🍀',
+    title: 'Clova AI Companion',
     desc: 'Teman belajar AI yang ramah, bisa diajak ngobrol santai, tanya materi, minta motivasi, atau minta dibuatkan ringkasan.',
     color: 'from-emerald-500 to-teal-500',
     bg: 'bg-emerald-50',
-  },
-  {
-    icon: '🔥',
-    title: 'Streak & Progress',
-    desc: 'Tracking streak belajar harian, progress bar per tugas, dan reminder otomatis H-7, H-3, H-1 biar nggak terlambat!',
-    color: 'from-amber-500 to-orange-500',
-    bg: 'bg-amber-50',
+    border: 'border-emerald-100',
   },
 ];
 
 const testimonials = [
-  { name: 'Aisha, Kelas 11', text: '"Tugas makalah 10 halaman jadi nggak takut lagi! AI langsung pecah jadi 8 langkah kecil."', avatar: '👩🎓' },
-  { name: 'Rizki, Kelas 10', text: '"Flashcard-nya kaya swipe TikTok tapi buat belajar. Addicting banget!"', avatar: '👨🎓' },
-  { name: 'Nadia, Kelas 12', text: '"Streak 30 hari! Sekarang tiap hari buka StudyBuddy bukan Instagram dulu."', avatar: '👩🎓' },
+  { name: 'Aisha, Kelas 11', text: '"Tugas makalah 10 halaman jadi nggak takut lagi! AI langsung pecah jadi langkah-langkah kecil yang gampang dicicil."', avatar: '👩‍🎓' },
+  { name: 'Rizki, Kelas 10', text: '"Flashcard-nya kaya swipe TikTok tapi buat belajar. Belajar jadi seru banget kayak petualangan!"', avatar: '👨‍🎓' },
+  { name: 'Nadia, Kelas 12', text: '"Fitur Smart Summary bikin materi ujian langsung rapi per mapel. Belajar jadi super efisien!"', avatar: '👩‍🎓' },
 ];
 
 const fadeUp = {
@@ -48,23 +53,35 @@ const fadeUp = {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/50">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">📚</span>
-            <span className="text-lg font-bold gradient-text" style={{ fontFamily: 'Plus Jakarta Sans' }}>
-              StudyBuddy <span className="text-primary-600">AI</span>
-            </span>
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
+      {/* Navbar with Magical Glassmorphism */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/70 backdrop-blur-xl border-b border-white/10 shadow-lg">
+        <div className="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo.png"
+              alt="Clova Logo"
+              className="w-9 h-9 object-contain drop-shadow-[0_0_12px_rgba(147,197,253,0.7)]"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-bold text-white tracking-wide" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                Clova
+              </span>
+              <span className="text-[10px] text-sky-300 font-medium tracking-widest uppercase -mt-1" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                belajar jadi petualangan
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/auth" className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">
+            <Link
+              to="/auth"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-3 py-1.5"
+            >
               Masuk
             </Link>
             <Link
               to="/auth"
-              className="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all duration-200 shadow-glow"
+              className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-[0_0_16px_rgba(99,102,241,0.4)] border border-white/20 hover:scale-105"
             >
               Mulai Gratis
             </Link>
@@ -72,94 +89,23 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="pt-28 pb-20 px-6 relative overflow-hidden">
-        {/* BG decoration */}
-        <div className="absolute top-20 right-0 w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -z-10" />
-        <div className="absolute top-40 left-10 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -z-10" />
+      {/* Hero Section with Animated Magical Background */}
+      <MagicalHeroBackground />
 
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6"
-          >
-            <Zap size={14} className="text-amber-500" />
-            Teman belajar AI untuk remaja SMP &amp; SMA
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight"
-            style={{ fontFamily: 'Plus Jakarta Sans' }}
-          >
-            Stop Scrolling,{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-cyan-500">
-              Mulai Belajar
-            </span>{' '}
-            🚀
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed"
-          >
-            StudyBuddy AI membantu kamu manage tugas sekolah, belajar dengan flashcard interaktif,
-            dan nggak burnout deadline. AI yang ngerti dunia pelajar Indonesia!
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link
-              to="/auth"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 gradient-primary text-white font-bold rounded-2xl text-lg shadow-glow hover:shadow-xl hover:scale-105 transition-all duration-200"
-            >
-              Mulai Gratis Sekarang <ArrowRight size={20} />
-            </Link>
-            <a
-              href="#fitur"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-gray-200 text-gray-700 font-semibold rounded-2xl hover:border-primary-300 hover:text-primary-700 transition-all duration-200"
-            >
-              Lihat Fitur
-            </a>
-          </motion.div>
-
-          {/* Social proof */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-10 flex items-center justify-center gap-2"
-          >
-            <div className="flex -space-x-2">
-              {['👩🎓','👨🎓','👩🎓','👨🎓','👩🎓'].map((a, i) => (
-                <div key={i} className="w-8 h-8 rounded-full bg-primary-100 border-2 border-white flex items-center justify-center text-sm">{a}</div>
-              ))}
-            </div>
-            <p className="text-sm text-gray-500 ml-2">
-              <span className="font-semibold text-gray-700">1,000+</span> pelajar sudah bergabung ✨
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="fitur" className="py-20 px-6 bg-gray-50">
+      {/* Features Section */}
+      <section id="fitur" className="py-24 px-6 bg-slate-900/90 relative border-t border-white/10">
         <div className="max-w-6xl mx-auto">
-          <motion.div {...fadeUp} className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>
-              Semua yang kamu butuhkan untuk belajar 💪
+          <motion.div {...fadeUp} className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-indigo-500/10 border border-indigo-400/20 text-indigo-300 rounded-full text-xs font-semibold uppercase tracking-wider mb-3">
+              <Sparkles size={13} />
+              Fitur Petualangan Belajar
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>
+              Semua yang kamu butuhkan untuk belajar pintar 💪
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">4 fitur utama yang saling terintegrasi, dirancang khusus supaya belajar terasa fun dan nggak stres.</p>
+            <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
+              Fitur canggih berbasis AI yang saling terintegrasi, dirancang khusus supaya belajar terasa seru, produktif, dan bebas stres.
+            </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -168,13 +114,17 @@ export default function LandingPage() {
                 key={i}
                 {...fadeUp}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`${f.bg} rounded-3xl p-8 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1`}
+                className="bg-slate-950/60 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-indigo-500/40 hover:shadow-[0_10px_30px_rgba(99,102,241,0.15)] transition-all duration-300 hover:-translate-y-1.5"
               >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-2xl mb-5 shadow-md`}>
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-2xl mb-5 shadow-lg shadow-indigo-500/20`}>
                   {f.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>{f.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{f.desc}</p>
+                <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Plus Jakarta Sans' }}>
+                  {f.title}
+                </h3>
+                <p className="text-slate-400 leading-relaxed text-sm sm:text-base">
+                  {f.desc}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -182,12 +132,15 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <motion.div {...fadeUp} className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-3" style={{ fontFamily: 'Plus Jakarta Sans' }}>
-              Kata mereka... ⭐
+      <section className="py-20 px-6 bg-slate-950 relative">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3" style={{ fontFamily: 'Plus Jakarta Sans' }}>
+              Kata Sahabat Petualang... ⭐
             </h2>
+            <p className="text-slate-400 text-sm sm:text-base">
+              Kisah nyata dari pelajar yang berhasil meningkatkan nilai dan semangat belajar mereka.
+            </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
@@ -195,15 +148,23 @@ export default function LandingPage() {
                 key={i}
                 {...fadeUp}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="bg-white rounded-3xl p-6 shadow-card border border-gray-100 hover:shadow-card-hover transition-all duration-300"
+                className="bg-slate-900/70 backdrop-blur-sm rounded-3xl p-6 border border-white/10 hover:border-indigo-500/30 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
               >
-                <div className="flex items-center gap-1 mb-3">
-                  {[...Array(5)].map((_, j) => <Star key={j} size={14} className="text-amber-400 fill-amber-400" />)}
+                <div>
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(5)].map((_, j) => (
+                      <Star key={j} size={14} className="text-amber-400 fill-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-slate-300 text-sm leading-relaxed mb-6 italic">
+                    {t.text}
+                  </p>
                 </div>
-                <p className="text-gray-700 text-sm leading-relaxed mb-4">{t.text}</p>
-                <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-lg">{t.avatar}</div>
-                  <span className="text-sm font-semibold text-gray-700">{t.name}</span>
+                <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                  <div className="w-9 h-9 rounded-full bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-base">
+                    {t.avatar}
+                  </div>
+                  <span className="text-sm font-semibold text-slate-200">{t.name}</span>
                 </div>
               </motion.div>
             ))}
@@ -211,28 +172,45 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 px-6">
+      {/* Final Call to Action */}
+      <section className="py-20 px-6 relative">
         <motion.div
           {...fadeUp}
-          className="max-w-3xl mx-auto gradient-primary rounded-3xl p-12 text-center text-white"
+          className="max-w-3xl mx-auto bg-gradient-to-r from-violet-900/90 via-indigo-900/90 to-slate-900/90 border border-indigo-500/30 rounded-3xl p-10 md:p-14 text-center text-white shadow-[0_0_50px_rgba(99,102,241,0.25)] relative overflow-hidden"
         >
-          <h2 className="text-3xl font-extrabold mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>
-            Siap belajar lebih smart? 🎓
-          </h2>
-          <p className="text-white/80 mb-8 text-lg">Gratis. Nggak perlu kartu kredit. Daftar dalam 30 detik.</p>
-          <Link
-            to="/auth"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary-700 font-bold rounded-2xl text-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
-          >
-            Daftar Gratis <ArrowRight size={20} />
-          </Link>
+          {/* Subtle glow orb */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full filter blur-3xl pointer-events-none" />
+          <div className="relative z-10">
+            <div className="w-16 h-16 mx-auto mb-4">
+              <img src="/logo.png" alt="Clova" className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.7)]" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ fontFamily: 'Plus Jakarta Sans' }}>
+              Siap Menjelajah &amp; Belajar Lebih Pintar? 🎓
+            </h2>
+            <p className="text-slate-300 mb-8 text-base sm:text-lg max-w-xl mx-auto">
+              100% Gratis. Akses Task Manager, Smart Summary, Flashcard, dan AI Chat sekarang juga!
+            </p>
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-900 font-extrabold rounded-2xl text-base sm:text-lg hover:bg-sky-50 hover:shadow-[0_0_30px_rgba(255,255,255,0.8)] hover:scale-105 transition-all duration-300 shadow-xl"
+            >
+              Daftar Gratis Sekarang <ArrowRight size={20} />
+            </Link>
+          </div>
         </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-gray-100 text-center">
-        <p className="text-gray-500 text-sm">© 2025 StudyBuddy AI · Dibuat dengan ❤️ untuk pelajar Indonesia</p>
+      <footer className="py-8 px-6 border-t border-white/10 text-center bg-slate-950">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <img src="/logo.png" alt="Logo" className="w-5 h-5 object-contain" />
+          <span className="text-sm font-semibold text-slate-300 tracking-wide" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+            Clova
+          </span>
+        </div>
+        <p className="text-slate-500 text-xs sm:text-sm">
+          © 2025 Clova · Belajar jadi petualangan seru untuk pelajar Indonesia 🇮🇩
+        </p>
       </footer>
     </div>
   );

@@ -58,7 +58,7 @@ export default function FlashcardsPage() {
         <div className="mb-5 p-4 bg-cyan-50 border border-cyan-200 rounded-2xl flex items-start gap-3">
           <Sparkles size={18} className="text-cyan-500 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-cyan-700">
-            <span className="font-semibold">Tips:</span> Pergi ke <strong>Chat AI</strong> dan minta StudyBuddy untuk generate flashcard dari materimu!
+            <span className="font-semibold">Tips:</span> Pergi ke <strong>Chat AI</strong> dan minta Clova untuk generate flashcard dari materimu!
           </p>
         </div>
 

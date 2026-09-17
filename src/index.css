@@ -3,7 +3,7 @@
 /* ===== TAILWIND V4 CUSTOM THEME ===== */
 @theme {
   /* Primary — purple */
-  --color-primary-50:  #f5f3ff;
+  --color-primary-50: #f5f3ff;
   --color-primary-100: #ede9fe;
   --color-primary-200: #ddd6fe;
   --color-primary-300: #c4b5fd;
@@ -20,7 +20,7 @@
   --color-cyan-600: #0891b2;
 
   /* Emerald */
-  --color-emerald-50:  #ecfdf5;
+  --color-emerald-50: #ecfdf5;
   --color-emerald-100: #d1fae5;
   --color-emerald-200: #a7f3d0;
   --color-emerald-400: #34d399;
@@ -29,7 +29,7 @@
   --color-emerald-700: #047857;
 
   /* Amber */
-  --color-amber-50:  #fffbeb;
+  --color-amber-50: #fffbeb;
   --color-amber-100: #fef3c7;
   --color-amber-400: #fbbf24;
   --color-amber-500: #f59e0b;
@@ -37,12 +37,12 @@
 
   /* Fonts */
   --font-family-display: "Plus Jakarta Sans", sans-serif;
-  --font-family-body:    "Inter", sans-serif;
+  --font-family-body: "Inter", sans-serif;
 
   /* Shadows */
-  --shadow-card:       0 4px 6px -1px rgba(124,58,237,0.07), 0 2px 4px -1px rgba(124,58,237,0.04);
-  --shadow-card-hover: 0 10px 25px -5px rgba(124,58,237,0.12), 0 4px 10px -2px rgba(124,58,237,0.08);
-  --shadow-glow:       0 0 20px rgba(124,58,237,0.25);
+  --shadow-card: 0 4px 6px -1px rgba(124, 58, 237, 0.07), 0 2px 4px -1px rgba(124, 58, 237, 0.04);
+  --shadow-card-hover: 0 10px 25px -5px rgba(124, 58, 237, 0.12), 0 4px 10px -2px rgba(124, 58, 237, 0.08);
+  --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.25);
 
   /* Border radius */
   --radius-2xl: 1rem;
@@ -69,6 +69,7 @@ button.gradient-primary,
   background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%) !important;
   color: white !important;
 }
+
 button.gradient-primary:active,
 [class*="gradient-primary"]:active {
   opacity: 0.88;
@@ -78,6 +79,7 @@ button.gradient-primary:active,
 button:focus {
   outline: none;
 }
+
 button:focus-visible {
   outline: 2px solid #7c3aed;
   outline-offset: 2px;
@@ -96,7 +98,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
@@ -105,13 +112,16 @@ h1, h2, h3, h4, h5, h6 {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #ddd6fe;
   border-radius: 999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #a78bfa;
 }
@@ -151,13 +161,27 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ===== SWIPE ANIMATION ===== */
 @keyframes swipeRight {
-  from { transform: translateX(0) rotate(0deg); opacity: 1; }
-  to   { transform: translateX(120%) rotate(15deg); opacity: 0; }
+  from {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(120%) rotate(15deg);
+    opacity: 0;
+  }
 }
 
 @keyframes swipeLeft {
-  from { transform: translateX(0) rotate(0deg); opacity: 1; }
-  to   { transform: translateX(-120%) rotate(-15deg); opacity: 0; }
+  from {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-120%) rotate(-15deg);
+    opacity: 0;
+  }
 }
 
 .swipe-right {
@@ -204,31 +228,110 @@ h1, h2, h3, h4, h5, h6 {
   background: white;
   color: #1f2937;
   border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* ===== ANIMATIONS ===== */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-.animate-float { animation: float 3s ease-in-out infinite; }
-.animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
 
 .skeleton {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 0.5rem;
+}
+
+/* ===== SMART SUMMARY — NOTEBOOK / STORYBOOK AESTHETIC ===== */
+
+/* Compact preview card */
+.notebook-card {
+  background: #fefdf7;
+  border: 1.5px solid #e5d9b8;
+  border-radius: 1.25rem;
+  padding: 0.875rem 1rem;
+  box-shadow: 0 2px 8px rgba(139, 105, 20, 0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
+  /* Subtle ruled-line texture */
+  background-image: repeating-linear-gradient(transparent,
+      transparent 27px,
+      #f0e8cc 28px);
+  background-size: 100% 28px;
+}
+
+/* Full detail card */
+.notebook-card-full {
+  background: #fefdf7;
+  border: 1.5px solid #e5d9b8;
+  border-radius: 1.5rem;
+  padding: 1.25rem;
+  box-shadow:
+    0 4px 16px rgba(139, 105, 20, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left binding strip */
+.notebook-card-full::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #d4b46a 0%, #8B6914 100%);
+  border-radius: 1.5rem 0 0 1.5rem;
+}
+
+/* Section inside full card */
+.notebook-section {
+  background: rgba(245, 230, 188, 0.15);
+  border: 1px solid #e5d9b8;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  transition: background 0.15s;
+}
+
+.notebook-section:hover {
+  background: rgba(245, 230, 188, 0.3);
 }

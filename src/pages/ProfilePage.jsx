@@ -116,7 +116,7 @@ export default function ProfilePage() {
   };
 
   const displayPhoto = localPhotoURL || profile?.photoURL;
-  const displayName = profile?.name || user?.displayName || 'StudyBuddy User';
+  const displayName = profile?.name || user?.displayName || 'Clova User';
   const initial = (displayName)[0].toUpperCase();
 
   const doneTasks = tasks.filter(t => t.status === 'done').length;
@@ -284,11 +284,11 @@ export default function ProfilePage() {
           transition={{ delay: 0.2 }}
           className="bg-white rounded-3xl p-5 shadow-card border border-gray-100"
         >
-          <h3 className="text-sm font-bold text-gray-700 mb-2">Tentang StudyBuddy AI</h3>
+          <h3 className="text-sm font-bold text-gray-700 mb-2">Tentang Clova</h3>
           <p className="text-sm text-gray-500 leading-relaxed">
-            StudyBuddy AI adalah teman belajar berbasis AI untuk remaja SMP &amp; SMA Indonesia.
-            Dirancang untuk membantu kamu manage tugas, belajar dengan flashcard interaktif,
-            dan menghindari burnout akibat deadline menumpuk. 📚✨
+            Clova adalah teman belajar berbasis AI untuk pelajar dan mahasiswa Indonesia.
+            Dirancang untuk membantu kamu manage tugas, rangkum materi, belajar dengan flashcard interaktif,
+            dan membuat petualangan belajar jadi seru dan menyenangkan. 📚✨
           </p>
           <p className="text-xs text-gray-400 mt-3">Powered by Google Gemini AI</p>
         </motion.div>

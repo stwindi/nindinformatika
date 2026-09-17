@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckSquare, BookOpen, MessageCircle, Plus, ArrowRight, Clock, Flame } from 'lucide-react';
+import { CheckSquare, BookOpen, MessageCircle, Plus, ArrowRight, Clock, Flame, Sparkles } from 'lucide-react';
 import useAuthStore from '../stores/authStore';
 import useTaskStore from '../stores/taskStore';
 import useFlashcardStore from '../stores/flashcardStore';
+import useSummaryStore from '../stores/summaryStore';
 import SubjectBadge from '../components/SubjectBadge';
 import ProgressBar from '../components/ProgressBar';
 import LoadingSpinner from '../components/LoadingSpinner';
+import SummaryCard from '../components/SummaryCard';
 import { getDaysUntilDeadline } from '../services/taskService';
 
 const cardAnim = (delay = 0) => ({
@@ -20,11 +22,13 @@ export default function DashboardPage() {
   const { user, profile, updateStreak } = useAuthStore();
   const { tasks, loading: taskLoading, fetchTasks, getUpcomingTasks } = useTaskStore();
   const { decks, loading: deckLoading, fetchDecks } = useFlashcardStore();
+  const { summaries, fetchSummaries, getRecentSummaries } = useSummaryStore();
 
   useEffect(() => {
     if (user?.uid) {
       fetchTasks(user.uid);
       fetchDecks(user.uid);
+      fetchSummaries(user.uid);
       updateStreak();
     }
   }, [user?.uid]);
@@ -51,14 +55,14 @@ export default function DashboardPage() {
           <motion.div {...cardAnim(0)}>
             <p className="text-white/70 text-sm mb-1">{greetingEmoji} {greeting},</p>
             <h1 className="text-2xl font-extrabold text-white" style={{ fontFamily: 'Plus Jakarta Sans' }}>
-              {profile?.name?.split(' ')[0] || 'StudyBuddy'}! 👋
+              {profile?.name?.split(' ')[0] || 'Clova'}! 👋
             </h1>
             <p className="text-white/70 text-sm mt-2">
               {urgentTasks.length > 0
                 ? `⚠️ ${urgentTasks.length} tugas mendekati deadline!`
                 : tasks.filter(t => t.status !== 'done').length === 0
-                ? '🎉 Semua tugas sudah selesai! Luar biasa!'
-                : `📋 ${tasks.filter(t => t.status !== 'done').length} tugas menunggu dikerjakan`
+                  ? '🎉 Semua tugas sudah selesai! Luar biasa!'
+                  : `📋 ${tasks.filter(t => t.status !== 'done').length} tugas menunggu dikerjakan`
               }
             </p>
           </motion.div>
@@ -97,11 +101,10 @@ export default function DashboardPage() {
                   return (
                     <Link key={task.id} to={`/tasks/${task.id}`}>
                       <div className="bg-white rounded-2xl p-3 flex items-center gap-3 hover:shadow-sm transition-shadow">
-                        <div className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold ${
-                          daysLeft === 0 ? 'bg-red-100 text-red-600'
-                          : daysLeft === 1 ? 'bg-red-50 text-red-500'
-                          : 'bg-amber-100 text-amber-600'
-                        }`}>
+                        <div className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold ${daysLeft === 0 ? 'bg-red-100 text-red-600'
+                            : daysLeft === 1 ? 'bg-red-50 text-red-500'
+                              : 'bg-amber-100 text-amber-600'
+                          }`}>
                           {daysLeft === 0 ? '!' : daysLeft}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -124,14 +127,21 @@ export default function DashboardPage() {
         {/* Quick actions */}
         <motion.div {...cardAnim(0.2)}>
           <h2 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Aksi Cepat</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Link to="/tasks" className="block">
               <div className="bg-white rounded-2xl p-4 shadow-card border border-gray-100 hover:shadow-card-hover hover:-translate-y-0.5 transition-all group">
                 <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center mb-3">
                   <CheckSquare size={20} className="text-primary-600" />
                 </div>
                 <p className="font-semibold text-gray-900 text-sm">Tambah Tugas</p>
-                <p className="text-xs text-gray-500 mt-0.5">+ AI breakdown otomatis</p>
+              </div>
+            </Link>
+            <Link to="/summary" className="block">
+              <div className="bg-white rounded-2xl p-4 shadow-card border border-gray-100 hover:shadow-card-hover hover:-translate-y-0.5 transition-all group">
+                <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center mb-3">
+                  <Sparkles size={20} className="text-purple-600" />
+                </div>
+                <p className="font-semibold text-gray-900 text-sm">Smart Summary</p>
               </div>
             </Link>
             <Link to="/flashcards" className="block">
@@ -139,8 +149,7 @@ export default function DashboardPage() {
                 <div className="w-10 h-10 rounded-xl bg-cyan-100 flex items-center justify-center mb-3">
                   <BookOpen size={20} className="text-cyan-600" />
                 </div>
-                <p className="font-semibold text-gray-900 text-sm">Review Flashcard</p>
-                <p className="text-xs text-gray-500 mt-0.5">{totalCards} kartu tersedia</p>
+                <p className="font-semibold text-gray-900 text-sm">Flashcard</p>
               </div>
             </Link>
             <Link to="/chat" className="block">
@@ -149,7 +158,6 @@ export default function DashboardPage() {
                   <MessageCircle size={20} className="text-emerald-600" />
                 </div>
                 <p className="font-semibold text-gray-900 text-sm">Chat AI</p>
-                <p className="text-xs text-gray-500 mt-0.5">Tanya apa saja</p>
               </div>
             </Link>
           </div>
@@ -186,11 +194,10 @@ export default function DashboardPage() {
                           <div className="flex items-center gap-2">
                             <SubjectBadge subject={task.subject} size="xs" />
                             {daysLeft !== null && (
-                              <span className={`text-xs ${
-                                daysLeft <= 1 ? 'text-red-500 font-semibold'
-                                : daysLeft <= 3 ? 'text-amber-600'
-                                : 'text-gray-400'
-                              }`}>
+                              <span className={`text-xs ${daysLeft <= 1 ? 'text-red-500 font-semibold'
+                                  : daysLeft <= 3 ? 'text-amber-600'
+                                    : 'text-gray-400'
+                                }`}>
                                 {daysLeft <= 0 ? 'Terlambat!' : daysLeft === 1 ? 'Besok!' : `${daysLeft} hari`}
                               </span>
                             )}
@@ -233,6 +240,24 @@ export default function DashboardPage() {
                     <p className="text-xs text-gray-400 mt-0.5">{deck.cardCount || 0} kartu</p>
                   </div>
                 </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+        {/* Recent summaries preview */}
+        {summaries.length > 0 && (
+          <motion.div {...cardAnim(0.35)}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide flex items-center gap-1.5">
+                <Sparkles size={13} className="text-amber-500" /> Rangkuman Terbaru
+              </h2>
+              <Link to="/summary" className="text-xs text-amber-600 font-medium hover:underline flex items-center gap-1">
+                Semua <ArrowRight size={12} />
+              </Link>
+            </div>
+            <div className="space-y-2">
+              {getRecentSummaries(3).map(s => (
+                <SummaryCard key={s.id} summary={s} compact />
               ))}
             </div>
           </motion.div>
