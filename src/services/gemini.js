@@ -8,7 +8,7 @@ console.log('[Gemini] API key prefix:', API_KEY?.slice(0, 10));
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 function getModel() {
-  return genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
+  return genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
 }
 
 // ---- TASK BREAKDOWN WITH DOCUMENT ----
